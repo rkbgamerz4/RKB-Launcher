@@ -1,23 +1,6 @@
-/*
- * Zalith Launcher 2
- * Copyright (C) 2025 MovTery <movtery228@qq.com> and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/gpl-3.0.txt>.
- */
-
 package com.movtery.zalithlauncher.ui.screens.content
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -30,11 +13,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
@@ -50,9 +35,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.movtery.zalithlauncher.BuildConfig
@@ -73,6 +62,13 @@ import com.movtery.zalithlauncher.utils.animation.swapAnimateDpAsState
 import com.movtery.zalithlauncher.viewmodel.LaunchGameViewModel
 import com.movtery.zalithlauncher.viewmodel.ScreenBackStackViewModel
 
+private val RKBBg = Color(0xFF050814)
+private val RKBSurface = Color(0xFF0B1220)
+private val RKBSurfaceVariant = Color(0xFF101C30)
+private val RKBAccent = Color(0xFF00A8FF)
+private val RKBAccentDim = Color(0xFF0088CC)
+private val RKBTextDim = Color(0xFF8AA3BD)
+
 @Composable
 fun LauncherScreen(
     backStackViewModel: ScreenBackStackViewModel,
@@ -84,7 +80,10 @@ fun LauncherScreen(
         currentKey = backStackViewModel.mainScreen.currentKey
     ) { isVisible ->
         Row(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .background(RKBBg)
+                .padding(12.dp)
         ) {
             ContentMenu(
                 isVisible = isVisible,
@@ -113,7 +112,7 @@ fun LauncherScreen(
                 modifier = Modifier
                     .weight(3f)
                     .fillMaxHeight()
-                    .padding(top = 12.dp, end = 12.dp, bottom = 12.dp),
+                    .padding(start = 12.dp),
                 launchGameViewModel = launchGameViewModel,
                 toAccountManageScreen = toAccountManageScreen,
                 toVersionManageScreen = toVersionManageScreen,
@@ -137,12 +136,83 @@ private fun ContentMenu(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .offset { IntOffset(x = 0, y = yOffset.roundToPx()) }
+            .offset { IntOffset(x = 0, y = yOffset.roundToPx()) },
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(220.dp)
+                .clip(RoundedCornerShape(20.dp))
+                .background(
+                    Brush.linearGradient(
+                        colors = listOf(RKBSurface, RKBBg, RKBSurfaceVariant)
+                    )
+                )
+                .padding(28.dp),
+            contentAlignment = Alignment.BottomStart
+        ) {
+            Column {
+                Text(
+                    text = "Welcome back,",
+                    color = Color.White,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = "Player!",
+                    color = RKBAccent,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(
+                    text = "Ready to play some epic adventures?",
+                    color = RKBTextDim,
+                    fontSize = 13.sp
+                )
+            }
+        }
+
+        BackgroundCard(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "Latest News",
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 15.sp
+                    )
+                    Text(
+                        text = "View All",
+                        color = RKBAccent,
+                        fontSize = 12.sp
+                    )
+                }
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(
+                    text = "Minecraft Update Released",
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 13.sp
+                )
+                Text(
+                    text = "Explore the latest features and improvements in the new update.",
+                    color = RKBTextDim,
+                    fontSize = 12.sp
+                )
+            }
+        }
+
         if (BuildConfig.DEBUG) {
-            //debug版本关不掉的警告，防止有人把测试版当正式版用 XD
             BackgroundCard(
-                modifier = Modifier.padding(all = 12.dp),
+                modifier = Modifier.fillMaxWidth(),
                 shape = MaterialTheme.shapes.extraLarge
             ) {
                 Column(
@@ -267,9 +337,11 @@ private fun RightMenu(
         isHorizontal = true
     )
 
-    BackgroundCard(
-        modifier = modifier.offset { IntOffset(x = xOffset.roundToPx(), y = 0) },
-        shape = MaterialTheme.shapes.extraLarge
+    Box(
+        modifier = modifier
+            .offset { IntOffset(x = xOffset.roundToPx(), y = 0) }
+            .clip(RoundedCornerShape(20.dp))
+            .background(RKBSurface)
     ) {
         RightMenuContent(
             modifier = Modifier.fillMaxSize(),
@@ -279,7 +351,13 @@ private fun RightMenu(
             toVersionSettingsScreen = toVersionSettingsScreen
         ) { innerModifier, onClick, text ->
             ScalingActionButton(
-                modifier = innerModifier,
+                modifier = innerModifier
+                    .clip(RoundedCornerShape(14.dp))
+                    .background(
+                        Brush.horizontalGradient(
+                            colors = listOf(RKBAccent, RKBAccentDim)
+                        )
+                    ),
                 elevation = ButtonDefaults.buttonElevation(defaultElevation = 1.dp),
                 onClick = onClick,
                 content = text
